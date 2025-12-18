@@ -75,4 +75,5 @@ if st.button("Book Ticket"):
         if need_cab == "Yes":
             st.write("Drop Location:", drop_location)
 
-        st.image(qr_bytes, width=250) I want two qrs
+        st.image(qr_bytes, width=250) 
+
