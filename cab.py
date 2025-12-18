@@ -11,8 +11,8 @@ def generate_qr(data):
     img = qr.make_image(fill_color="black", back_color="white")
     return img
 
-st.set_page_config(page_title="METRO TICKET BOOKING")
-st.title("Metro Ticket Booking System")
+st.set_page_config(page_title="METRO TICKET BOOKING", page_icon="$")
+st.title("$ Metro Ticket Booking System")
 
 stations = ["Ameerpet", "Miyapur", "LB Nagar", "KPHB", "JNTU"]
 
@@ -21,10 +21,16 @@ source = st.selectbox("Source Station", stations)
 destination = st.selectbox("Destination Station", stations)
 no_tickets = st.number_input("Number of Tickets", min_value=1, value=1)
 
+need_cab = st.radio("Do you need Cab?", ["No", "Yes"])
+
+drop_location = ""
+if need_cab == "Yes":
+    drop_location = st.text_input("Enter Drop Location")
+
 price_per_ticket = 30
 total_amount = no_tickets * price_per_ticket
 
-st.info("Total Amount: " + str(total_amount))
+st.info("$ Total Amount: " + str(total_amount))
 
 if st.button("Book Ticket"):
 
@@ -33,6 +39,9 @@ if st.button("Book Ticket"):
 
     elif source == destination:
         st.error("Source and destination cannot be same")
+
+    elif need_cab == "Yes" and drop_location.strip() == "":
+        st.error("Please enter drop location")
 
     else:
         booking_id = str(uuid.uuid4())[:8]
@@ -43,7 +52,9 @@ if st.button("Book Ticket"):
             "From: " + source + "\n"
             "To: " + destination + "\n"
             "Tickets: " + str(no_tickets) + "\n"
-            "Amount: " + str(total_amount)
+            "Amount: " + str(total_amount) + "\n"
+            "Cab: " + need_cab + "\n"
+            "Drop: " + drop_location
         )
 
         qr_img = generate_qr(qr_data)
@@ -51,16 +62,17 @@ if st.button("Book Ticket"):
         qr_img.save(buf, format="PNG")
         qr_bytes = buf.getvalue()
 
-        st.success("Ticket booked successfully")
+        st.success("Ticket & Cab booked successfully ")
 
-        st.write("Ticket Details")
+        st.write("### Ticket Details")
         st.write("Booking ID:", booking_id)
         st.write("From:", source)
         st.write("To:", destination)
         st.write("Tickets:", no_tickets)
         st.write("Amount Paid:", total_amount)
+        st.write("Cab Required:", need_cab)
 
-        st.image(qr_bytes, width=250)
+        if need_cab == "Yes":
+            st.write("Drop Location:", drop_location)
 
-
-
+        st.image(qr_bytes, width=250) I want two qrs
